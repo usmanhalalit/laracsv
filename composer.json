@@ -1,0 +1,5 @@
+{
+    "require": {
+        "league/csv": "8.2.*"
+    }
+}
