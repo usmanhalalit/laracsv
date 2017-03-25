@@ -1,6 +1,6 @@
 <?php
 
-namespace Laracsv;
+namespace Laracsv\Csv;
 
 use League\Csv\Writer;
 use SplTempFileObject;
@@ -38,7 +38,7 @@ class Export
                 }
             }
 
-            $row = $row->makeVisible($fields)->toArray();
+            $row = $this->makeAllFieldsVisisble($fields, $row);
 
             $csvRow = [];
             foreach ($fields as $field) {
@@ -66,5 +66,11 @@ class Export
     public function getCsv()
     {
         return $this->csv;
+    }
+
+    private function makeAllFieldsVisible(array $fields, $row)
+    {
+        $row = $row->makeVisible($fields)->toArray();
+        return $row;
     }
 }
