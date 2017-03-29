@@ -33,11 +33,13 @@ $csvExporter->download();
 
 ```php
 $csvExporter->beforeEach(function($model){
-    // A callback function to modify models for
+    // A callback function to modify models
 });
 ```
 
 ### Model attributes modification
+
+Renaming model attribute.
 
 ```php
 $modelAttributes = ['id', 'attribute1', 'attribute2' => 'attribute 2'];
