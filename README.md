@@ -39,4 +39,6 @@ $csvExporter->beforeEach(function($model){
 
 ### Model attributes modification
 
+```php
 $modelAttributes = ['id', 'attribute1', 'attribute2' => 'attribute 2'];
+```
