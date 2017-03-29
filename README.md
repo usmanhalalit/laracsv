@@ -1,4 +1,4 @@
-# Alt-LaraCSV
+# LaraCSV
 
 A wrapper for preparing and downloading of CSV file from your model, specifically made for Laravel project.
 
