@@ -1,8 +1,20 @@
 # LaraCSV
 
-A wrapper for preparing and downloading of CSV file from your model, specifically made for Laravel project.
+A Laravel package to easily generate CSV files from Eloquent model.
 
 ## Basic usage
+
+```php
+$model = User::get();
+$csvExporter = new \Laracsv\Csv\Export();
+$csvExporter->build($model, ['email', 'name'])->download();
+```
+
+And a proper CSV file will be downloaded with `email` and `name` fields.
+
+## Installation
+
+
 
 ### Preparation step:
 
@@ -18,14 +30,6 @@ $csvExporter = new \Laracsv\Csv\Export();
 
 $csvExporter->build($model, $modelAttributes);
 ```
-
-###Download step:
-
-To download
-```php
-$csvExporter->download();
-```
-
 
 ## Advance Usage
 

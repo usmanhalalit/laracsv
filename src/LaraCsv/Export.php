@@ -18,7 +18,6 @@ class Export
     }
 
     public function build($collection, array $fields)
-
     {
         $csv = $this->csv;
         $headers = [];
@@ -50,9 +49,8 @@ class Export
             }
 
 
-            //$row = $row->makeVisible($fields)->toArray();
             $row = $this->makeAllFieldsVisible($fields, $row);
-
+            $row->toArray();
             $csvRow = [];
 
             foreach ($fields as $field) {
@@ -90,7 +88,7 @@ class Export
     private function makeAllFieldsVisible(array $fields, $row)
 
     {
-        $row = $row->makeVisible($fields)->toArray();
+        $row = $row->makeVisible($fields);
         return $row;
     }
 }
