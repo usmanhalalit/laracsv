@@ -12,7 +12,7 @@
          syntaxCheck="false">
     <testsuites>
         <testsuite name="LaraCSV Test Suite">
-            <directory>tests/LaraCSV/</directory>
+            <directory>tests/Laracsv/</directory>
         </testsuite>
     </testsuites>
 </phpunit>

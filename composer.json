@@ -5,7 +5,8 @@
     "require": {
         "league/csv": "8.2.*",
         "php": ">=5.4.0",
-        "phpunit/phpunit": "^6.0"
+        "phpunit/phpunit": "^6.0",
+        "fzaninotto/faker": "^1.6"
     },
 
     "require-dev": {
@@ -16,5 +17,15 @@
         "psr-4": {
             "Laracsv\\": "src/Laracsv/"
         }
+    },
+
+    "autoload-dev": {
+        "psr-4": {
+            "Laracsv\\": "tests/Laracsv/"
+        },
+
+        "classmap": [
+            "tests/TestCase.php"
+        ]
     }
 }
