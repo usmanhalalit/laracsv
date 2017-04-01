@@ -49,4 +49,9 @@ class TestCase extends PhpunitTestCase
             $table->timestamps();
         });
     }
+
+    private function seedData()
+    {
+
+    }
 }
