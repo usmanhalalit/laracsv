@@ -4,10 +4,12 @@
 
     "require": {
         "league/csv": "8.2.*",
-        "php": ">=5.4.0"
+        "php": ">=5.4.0",
+        "phpunit/phpunit": "^6.0"
     },
 
     "require-dev": {
+        "illuminate/database": "5.*@dev"
     },
 
     "autoload":	{
