@@ -73,3 +73,20 @@ $csvExporter->beforeEach(function($user) {
 
 ### Model Relationships
 
+You can also add fields in the CSV from related database tables, given the model
+ has relationships defined.
+ 
+This will get the product title and the related category's title (one to one). 
+```php
+$csvExporter->build($products, ['title', 'category.title']);
+```
+
+You may also tinker relation things as you wish with hooks:
+
+```php
+$fields = ['id', 'title', 'price', 'original_price' => 'Market Price', 'purchase_price', 'tags', 'status', 'category_ids',];
+$csvExporter = new \Laracsv\Csv\Export();
+$csvExporter->beforeEach(function ($product) {
+    $product->category_ids = implode(', ', $product->categories->pluck('title')->toArray());
+});
+```
