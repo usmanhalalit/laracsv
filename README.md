@@ -84,9 +84,10 @@ $csvExporter->build($products, ['title', 'category.title']);
 You may also tinker relation things as you wish with hooks:
 
 ```php
-$fields = ['id', 'title', 'price', 'original_price' => 'Market Price', 'purchase_price', 'tags', 'status', 'category_ids',];
+$products = Product::where('order_count', '>', 10)->orderBy('order_count', 'desc')->get();
+$fields = ['id', 'title','original_price' => 'Market Price', 'category_ids',];
 $csvExporter = new \Laracsv\Csv\Export();
 $csvExporter->beforeEach(function ($product) {
-    $product->category_ids = implode(', ', $product->categories->pluck('title')->toArray());
+    $product->category_ids = implode(', ', $product->categories->pluck('id')->toArray());
 });
 ```

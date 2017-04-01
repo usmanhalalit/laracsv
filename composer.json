@@ -4,7 +4,7 @@
 
     "require": {
         "league/csv": "8.2.*",
-        "php": ">=5.6.0"
+        "php": ">=5.4.0"
     },
 
     "require-dev": {
@@ -12,7 +12,7 @@
 
     "autoload":	{
         "psr-4": {
-            "Laracsv\\Csv\\": "src/Laracsv/"
+            "Laracsv\\": "src/Laracsv/"
         }
     }
 }

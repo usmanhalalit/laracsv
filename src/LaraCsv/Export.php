@@ -1,6 +1,6 @@
 <?php
 
-namespace Laracsv\Csv;
+namespace Laracsv;
 
 use League\Csv\Writer;
 use SplTempFileObject;
