@@ -4,7 +4,7 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\Blueprint;
 use Laracsv\Models\Category;
 use Laracsv\Models\Product;
-use PHPUnit_Framework_TestCase as PhpunitTestCase;
+use PHPUnit\Framework\TestCase as PhpunitTestCase;
 
 class TestCase extends PhpunitTestCase
 {
@@ -49,7 +49,6 @@ class TestCase extends PhpunitTestCase
             $table->increments('id');
             $table->integer('category_id');
             $table->integer('product_id');
-            $table->timestamps();
         });
     }
 
