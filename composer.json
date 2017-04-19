@@ -1,8 +1,8 @@
 {
     "name": "usmanhalalit/laracsv",
-    "description": "Turn your Eloquent models into CSV",
+    "description": "A Laravel package to easily generate CSV files from Eloquent model.",
     "homepage": "https://github.com/usmanhalalit/laracsv",
-    "keywords": ["paginator", "pagination", "page"],
+    "keywords": ["laravel", "csv", "eloquent", "export"],
     "license": "MIT",
     "minimum-stability": "dev",
     "authors":
