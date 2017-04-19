@@ -105,6 +105,9 @@ $csvExporter->beforeEach(function($user) {
 });
 ```
 
+**Note:** If a `beforeEach` callback returns `false` then the entire will be 
+excluded from the CSV. It can come handy to filter some rows.
+
 #### Add fields and values
 
 You may also add fields that don't exists in a database table add values on the fly. 

@@ -33,27 +33,10 @@ class Export
 
         }
 
+        // Add first line, the header
         $csv->insertOne($headers);
 
-        foreach ($collection as $row) {
-            $beforeEachCallback = $this->beforeEachCallback;
-
-            if ($beforeEachCallback) {
-                $return = $beforeEachCallback($row);
-                if ($return === false) {
-                    continue;
-                }
-            }
-
-            $row = $this->makeAllFieldsVisible($fields, $row);
-            $row->toArray();
-            $csvRow = [];
-            foreach ($fields as $field) {
-                $csvRow[] = array_get($row, $field);
-            }
-
-            $csv->insertOne($csvRow);
-        }
+        $this->addCsvRows($collection, $fields, $csv);
 
         return $this;
     }
@@ -82,5 +65,34 @@ class Export
     {
         $row = $row->makeVisible($fields);
         return $row;
+    }
+
+    /**
+     * @param $collection
+     * @param array $fields
+     * @param $csv
+     */
+    private function addCsvRows($collection, array $fields, $csv)
+    {
+        foreach ($collection as $model) {
+            $beforeEachCallback = $this->beforeEachCallback;
+
+            // Call hook
+            if ($beforeEachCallback) {
+                $return = $beforeEachCallback($model);
+                if ($return === false) {
+                    continue;
+                }
+            }
+
+            $model = $this->makeAllFieldsVisible($fields, $model);
+            $model->toArray();
+            $csvRow = [];
+            foreach ($fields as $field) {
+                $csvRow[] = array_get($model, $field);
+            }
+
+            $csv->insertOne($csvRow);
+        }
     }
 }
