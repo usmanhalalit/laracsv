@@ -4,7 +4,7 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\Blueprint;
 use Laracsv\Models\Category;
 use Laracsv\Models\Product;
-use PHPUnit\Framework\TestCase as PhpunitTestCase;
+use PHPUnit_Framework_TestCase as PhpunitTestCase;
 
 class TestCase extends PhpunitTestCase
 {

@@ -15,14 +15,14 @@
     ],
 
     "require": {
-        "php": ">=5.5.0",
+        "php": ">=5.5.9",
         "league/csv": "8.2.*"
     },
 
     "require-dev": {
         "fzaninotto/faker": "^1.6",
-        "illuminate/database": "5.*@dev",
-        "phpunit/phpunit": "5.7"
+        "illuminate/database": "5.1.*@dev",
+        "phpunit/phpunit": "4.8"
     },
 
     "autoload":	{
