@@ -3,13 +3,13 @@
     "minimum-stability": "dev",
 
     "require": {
-        "league/csv": "8.2.*",
         "php": ">=5.4.0",
-        "phpunit/phpunit": "^6.0",
-        "fzaninotto/faker": "^1.6"
+        "league/csv": "8.2.*"
     },
 
     "require-dev": {
+        "phpunit/phpunit": "^6.0",
+        "fzaninotto/faker": "^1.6",
         "illuminate/database": "5.*@dev"
     },
 

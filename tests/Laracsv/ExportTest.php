@@ -1,15 +1,9 @@
 <?php namespace Laracsv;
 
-use Laracsv\Export;
 use Laracsv\Models\Product;
 
-class MakeSureTest extends TestCase
+class ExportTest extends TestCase
 {
-    public function testToMakeSure()
-    {
-        $this->assertTrue(true);
-    }
-
     public function testBasicCsv()
     {
         $products = Product::limit(10)->get();
@@ -19,8 +13,10 @@ class MakeSureTest extends TestCase
         $csvExporter = new Export();
         $csvExporter->build($products, $fields);
         $csv = (string) $csvExporter->getCsv();
-        $firstLine = explode(PHP_EOL, $csv)[0];
+        $lines = explode(PHP_EOL, trim($csv));
+        $firstLine = $lines[0];
         $this->assertEquals("id,title,price,original_price", $firstLine);
-
+        $this->assertCount(11, $lines);
+        $this->assertCount(count($fields), explode(',', $lines[2]));
     }
 }
