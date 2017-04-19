@@ -16,10 +16,10 @@ And a proper CSV file will be downloaded with `email` and `name` fields.
 
 ## Installation
 
-Just run
+Just run this on your terminal
 
 ```
-composer require usmanhalalit/laracsv:1.*
+composer require "usmanhalalit/laracsv:1.*@dev"
 ```
 and you should be good to go.
 
@@ -98,11 +98,13 @@ There is a hook which is triggered before processing a database row.
 ```php
 $csvExporter = new \Laracsv\Export();
 $users = User::get();
-$csvExporter->build($users, ['email', 'name' => 'Full Name', 'created_at' => 'Joined']);
 
+// Register the hook before building
 $csvExporter->beforeEach(function($user) {
     $user->created_at = date('f', strtotime($user->created_at)); 
 });
+
+$csvExporter->build($users, ['email', 'name' => 'Full Name', 'created_at' => 'Joined']);
 ```
 
 **Note:** If a `beforeEach` callback returns `false` then the entire will be 
@@ -114,12 +116,12 @@ You may also add fields that don't exists in a database table add values on the 
 
 ```php
 // The notes field doesn't exist so values for this field will be blank by default 
-$csvExporter->build($users, ['email', 'notes']);
-
 $csvExporter->beforeEach(function($user) {
     // Now notes field will have this value
     $user->notes = 'Add your notes'; 
 });
+
+$csvExporter->build($users, ['email', 'notes']);
 ```
 
 ### Model Relationships
