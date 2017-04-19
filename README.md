@@ -6,7 +6,7 @@ A Laravel package to easily generate CSV files from Eloquent model.
 
 ```php
 $users = User::get(); // all users
-$csvExporter = new \Laracsv\Csv\Export();
+$csvExporter = new \Laracsv\Export();
 $csvExporter->build($users, ['email', 'name'])->download();
 ```
 
@@ -94,7 +94,7 @@ values from `name` field of the model.
 There is a hook which is triggered before processing a database row.
   For example if you want to change the date format you can do so.
 ```php
-$csvExporter = new \Laracsv\Csv\Export();
+$csvExporter = new \Laracsv\Export();
 $users = User::get();
 $csvExporter->build($users, ['email', 'name' => 'Full Name', 'created_at' => 'Joined']);
 
@@ -132,7 +132,7 @@ You may also tinker relation things as you wish with hooks:
 ```php
 $products = Product::where('order_count', '>', 10)->orderBy('order_count', 'desc')->get();
 $fields = ['id', 'title','original_price' => 'Market Price', 'category_ids',];
-$csvExporter = new \Laracsv\Csv\Export();
+$csvExporter = new \Laracsv\Export();
 $csvExporter->beforeEach(function ($product) {
     $product->category_ids = implode(', ', $product->categories->pluck('id')->toArray());
 });
