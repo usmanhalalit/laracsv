@@ -25,7 +25,7 @@ and you should be good to go.
 
  - [Build CSV](#build-csv)
  - [Output Options](#output-options)
-    - [Download](#advanced-outputs) 
+    - [Download](#download) 
  - [Custom Headers](#custom-headers)
  - [Modify or Add Values](#modify-or-add-values)
     - [Add fields and values](#add-fields-and-values)
