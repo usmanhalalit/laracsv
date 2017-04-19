@@ -1,9 +1,21 @@
 {
     "name": "usmanhalalit/laracsv",
+    "description": "Turn your Eloquent models into CSV",
+    "homepage": "https://github.com/usmanhalalit/laracsv",
+    "keywords": ["paginator", "pagination", "page"],
+    "license": "MIT",
     "minimum-stability": "dev",
+    "authors":
+    [
+        {
+            "name": "Muhammad Usman",
+            "email": "hi@usman.it",
+            "role": "Developer"
+        }
+    ],
 
     "require": {
-        "php": ">=5.4.0",
+        "php": ">=5.5.0",
         "league/csv": "8.2.*"
     },
 

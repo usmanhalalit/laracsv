@@ -21,7 +21,18 @@ composer require usmanhalalit/laracsv:1.*
 ```
 and you should be good to go.
 
-## Detailed Usage
+## Full Documentation
+
+ - [Build CSV](#build-csv)
+ - [Output Options](#output-options)
+    - [Download](#advanced-outputs) 
+ - [Custom Headers](#custom-headers)
+ - [Modify or Add Values](#modify-or-add-values)
+    - [Add fields and values](#add-fields-and-values)
+ - [Model Relationships](#model-relationships)
+
+
+### Build CSV
 
 `$exporter->build($modelCollection, $fields)` takes two parameters. 
 First one is the model (collection of models), and seconds one takes the field names
@@ -31,7 +42,42 @@ First one is the model (collection of models), and seconds one takes the field n
 $csvExporter->build(User::get(), ['email', 'name', 'created_at']);
 ```
 
-### Custom Header
+### Output Options
+#### Download
+
+To get file downloaded to the browser.
+```php
+$csvExporter->download();
+```
+
+You can provide a filename if you wish,
+```php
+$csvExporter->download('active_users.csv');
+```
+
+If no filename is given a filename with date-time will be generated.
+
+#### Advanced Outputs
+
+LaraCSV uses [League CSV](http://csv.thephpleague.com/). You can do what League CSV 
+is able to do. You can get the underlying League CSV instance by calling:
+
+```php
+$csv = $csvExporter->getCsv();
+```
+
+And then you can do several things like:
+```php
+$csv->toHTML(); // To output the CSV as an HTML table 
+$csv->jsonSerialize()(); // To turn the CSV in to an array 
+$csv = (string) $csv; // To get the CSV as string
+echo $csv; // To print the CSV
+```
+
+For more information please check [League CSV documentation](http://csv.thephpleague.com/).
+
+
+### Custom Headers
 
 Above code example will generate a CSV with headers email, name, created_at and corresponding rows after.
 
@@ -57,7 +103,7 @@ $csvExporter->beforeEach(function($user) {
 });
 ```
 
-**Add fields and values**
+#### Add fields and values
 
 You may also add fields that don't exists in a database table add values on the fly. 
 
@@ -91,3 +137,8 @@ $csvExporter->beforeEach(function ($product) {
     $product->category_ids = implode(', ', $product->categories->pluck('id')->toArray());
 });
 ```
+
+## Road Map
+
+ - Import CSV
+ 

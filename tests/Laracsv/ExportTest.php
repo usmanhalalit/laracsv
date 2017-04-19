@@ -12,7 +12,7 @@ class ExportTest extends TestCase
 
         $csvExporter = new Export();
         $csvExporter->build($products, $fields);
-        $csv = (string) $csvExporter->getCsv();
+        $csv = $csvExporter->getCsv();
         $lines = explode(PHP_EOL, trim($csv));
         $firstLine = $lines[0];
         $this->assertEquals("id,title,price,original_price", $firstLine);
