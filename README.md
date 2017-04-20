@@ -7,7 +7,7 @@ A Laravel package to easily generate CSV files from Eloquent model.
 ## Basic usage
 
 ```php
-$users = User::get(); // all users
+$users = User::get(); // All users
 $csvExporter = new \Laracsv\Export();
 $csvExporter->build($users, ['email', 'name'])->download();
 ```
@@ -16,7 +16,7 @@ And a proper CSV file will be downloaded with `email` and `name` fields.
 
 ## Installation
 
-Just run this on your terminal
+Just run this on your terminal:
 
 ```
 composer require "usmanhalalit/laracsv:1.*@dev"
@@ -47,12 +47,12 @@ $csvExporter->build(User::get(), ['email', 'name', 'created_at']);
 ### Output Options
 #### Download
 
-To get file downloaded to the browser.
+To get file downloaded to the browser:
 ```php
 $csvExporter->download();
 ```
 
-You can provide a filename if you wish,
+You can provide a filename if you wish:
 ```php
 $csvExporter->download('active_users.csv');
 ```
@@ -94,13 +94,13 @@ values from `name` field of the model.
 ### Modify or Add Values
 
 There is a hook which is triggered before processing a database row.
-  For example if you want to change the date format you can do so.
+  For example, if you want to change the date format you can do so.
 ```php
 $csvExporter = new \Laracsv\Export();
 $users = User::get();
 
 // Register the hook before building
-$csvExporter->beforeEach(function($user) {
+$csvExporter->beforeEach(function ($user) {
     $user->created_at = date('f', strtotime($user->created_at)); 
 });
 
@@ -112,11 +112,11 @@ excluded from the CSV. It can come handy to filter some rows.
 
 #### Add fields and values
 
-You may also add fields that don't exists in a database table add values on the fly. 
+You may also add fields that don't exists in a database table add values on the fly:
 
 ```php
 // The notes field doesn't exist so values for this field will be blank by default 
-$csvExporter->beforeEach(function($user) {
+$csvExporter->beforeEach(function ($user) {
     // Now notes field will have this value
     $user->notes = 'Add your notes'; 
 });
@@ -129,7 +129,7 @@ $csvExporter->build($users, ['email', 'notes']);
 You can also add fields in the CSV from related database tables, given the model
  has relationships defined.
  
-This will get the product title and the related category's title (one to one). 
+This will get the product title and the related category's title (one to one):
 ```php
 $csvExporter->build($products, ['title', 'category.title']);
 ```
