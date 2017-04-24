@@ -12,25 +12,35 @@ class Export
      * @var LeagueWriter
      */
     protected $csv;
-
+    /**
+     * __construct
+     *
+     * @return void
+     */
     public function __construct()
     {
         $this->csv = LeagueWriter::createFromFileObject(new SplTempFileObject());
     }
-
+    
+    /**
+     * Build.
+     *
+     * @param $collection
+     * @param array $fiels
+     * @return \Export
+     */
     public function build($collection, array $fields)
     {
         $csv = $this->csv;
         $headers = [];
 
-        foreach ($fields as $key => $field) {
-
+        foreach ($fields as $key => $field) 
+        {
             $headers[] = $field;
-
-            if (! is_numeric($key)) {
+            if (! is_numeric($key)) 
+            {
                 $fields[$key] = $key;
             }
-
         }
 
         // Add first line, the header
