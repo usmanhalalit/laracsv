@@ -24,13 +24,11 @@ class Export
         $headers = [];
 
         foreach ($fields as $key => $field) {
-
             $headers[] = $field;
 
             if (! is_numeric($key)) {
                 $fields[$key] = $key;
             }
-
         }
 
         // Add first line, the header
