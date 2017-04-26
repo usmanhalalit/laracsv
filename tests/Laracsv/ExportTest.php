@@ -31,7 +31,7 @@ class ExportTest extends TestCase
         $csv = $csvExporter->getCsv();
         $lines = explode(PHP_EOL, trim($csv));
         $firstLine = $lines[0];
-        $this->assertEquals('id,Name,price,"Retail Price","Custom Field"', $firstLine);
+        $this->assertSame('id,Name,price,"Retail Price","Custom Field"', $firstLine);
     }
 
     public function testWithBeforeEachCallback()
@@ -52,8 +52,8 @@ class ExportTest extends TestCase
         $lines = explode(PHP_EOL, trim($csv));
         $firstLine = $lines[0];
         $thirdRow = explode(',', $lines[2]);
-        $this->assertEquals('id,Name,price,"Retail Price","Custom Field"', $firstLine);
+        $this->assertSame('id,Name,price,"Retail Price","Custom Field"', $firstLine);
         $this->assertEquals(30, $thirdRow[2]);
-        $this->assertEquals('"Test Value"', $thirdRow[4]);
+        $this->assertSame('"Test Value"', $thirdRow[4]);
     }
 }
