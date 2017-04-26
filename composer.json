@@ -4,7 +4,6 @@
     "homepage": "https://github.com/usmanhalalit/laracsv",
     "keywords": ["laravel", "csv", "eloquent", "export"],
     "license": "MIT",
-    "minimum-stability": "dev",
     "authors":
     [
         {
@@ -21,7 +20,7 @@
 
     "require-dev": {
         "fzaninotto/faker": "^1.6",
-        "illuminate/database": "5.2.*@dev",
+        "illuminate/database": "5.2.*",
         "phpunit/phpunit": "5.7.*"
     },
 
