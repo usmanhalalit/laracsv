@@ -1,5 +1,6 @@
 <?php namespace Laracsv;
 
+use Laracsv\Models\Category;
 use Laracsv\Models\Product;
 
 class ExportTest extends TestCase
@@ -55,5 +56,32 @@ class ExportTest extends TestCase
         $this->assertSame('id,Name,price,"Retail Price","Custom Field"', $firstLine);
         $this->assertEquals(30, $thirdRow[2]);
         $this->assertSame('"Test Value"', $thirdRow[4]);
+    }
+
+    public function testUtf8()
+    {
+        $faker = \Faker\Factory::create();
+
+        foreach (range(11, 15) as $item) {
+            $product = Product::create([
+                'title' =>  'رجا ابو سلامة',
+                'price' => 70,
+                'original_price' => 80,
+            ]);
+
+            $product->categories()->attach(Category::find(collect(range(1, 10))->random()));
+        }
+
+        $products = Product::where('title',  'رجا ابو سلامة')->get();
+        $this->assertEquals('رجا ابو سلامة', $products->first()->title);
+
+        $csvExporter = new Export();
+
+        $csvExporter->build($products, ['title', 'price']);
+
+        $csv = $csvExporter->getCsv();
+        $lines = explode(PHP_EOL, trim($csv));
+
+        $this->assertSame('"رجا ابو سلامة",70', $lines[2]);
     }
 }
