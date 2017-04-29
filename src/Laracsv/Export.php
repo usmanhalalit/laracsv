@@ -2,6 +2,7 @@
 
 namespace Laracsv;
 
+use League\Csv\AbstractCsv as LeagueCsvWriter;
 use League\Csv\Writer;
 use SplTempFileObject;
 use Illuminate\Support\Arr;
@@ -29,9 +30,9 @@ class Export
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(LeagueCsvWriter $writer = null)
     {
-        $this->csv = Writer::createFromFileObject(new SplTempFileObject);
+        $this->csv = $writer ?: Writer::createFromFileObject(new SplTempFileObject);
     }
 
     /**

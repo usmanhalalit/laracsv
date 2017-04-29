@@ -2,6 +2,7 @@
 
 use Laracsv\Models\Category;
 use Laracsv\Models\Product;
+use League\Csv\Writer;
 
 class ExportTest extends TestCase
 {
@@ -83,5 +84,23 @@ class ExportTest extends TestCase
         $lines = explode(PHP_EOL, trim($csv));
 
         $this->assertSame('"رجا ابو سلامة",70', $lines[2]);
+    }
+
+    public function testCustomLeagueCsvWriters()
+    {
+        $products = Product::limit(10)->get();
+
+        $fields = ['id', 'title', 'price', 'original_price',];
+        file_put_contents('test.csv', '');
+        $csvExporter = new Export(Writer::createFromPath('test.csv', 'r+'));
+        $csvExporter->build($products, $fields);
+        $csv = $csvExporter->getCsv();
+
+        $lines = explode(PHP_EOL, trim($csv));
+        $firstLine = $lines[0];
+        $this->assertEquals("id,title,price,original_price", $firstLine);
+        $this->assertCount(11, $lines);
+        $this->assertCount(count($fields), explode(',', $lines[2]));
+        unlink('test.csv');
     }
 }
