@@ -4,6 +4,9 @@ namespace Laracsv;
 
 use League\Csv\Writer;
 use SplTempFileObject;
+use Illuminate\Support\Arr;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 
 class Export
 {
@@ -94,19 +97,6 @@ class Export
     }
 
     /**
-     * Ensure all fields of the model are visible.
-     *
-     * @param array $fields
-     * @param \Illuminate\Database\Eloquent\Model $row
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    private function makeAllFieldsVisible(array $fields, $row)
-    {
-        $row = $row->makeVisible($fields);
-        return $row;
-    }
-
-    /**
      * Add rows to the CSV.
      *
      * @param \Illuminate\Database\Eloquent\Collection $collection
@@ -114,27 +104,19 @@ class Export
      * @param \League\Csv\Writer $csv
      * @return void
      */
-    private function addCsvRows($collection, array $fields, $csv)
+    private function addCsvRows(Collection $collection, array $fields, Writer $csv)
     {
-        foreach ($collection as $model) {
-            $beforeEachCallback = $this->beforeEachCallback;
+        if ($beforeEachCallback = $this->beforeEachCallback) {
+            $collection->each($beforeEachCallback);
+        }
 
-            // Call hook
-            if ($beforeEachCallback) {
-                $return = $beforeEachCallback($model);
-                if ($return === false) {
-                    continue;
-                }
-            }
-
-            $model = $this->makeAllFieldsVisible($fields, $model);
-            $model->toArray();
+        $collection->makeVisible($fields)->each(function (Model $model) use ($fields, $csv) {
             $csvRow = [];
             foreach ($fields as $field) {
-                $csvRow[] = array_get($model, $field);
+                $csvRow[] = Arr::get($model->toArray(), $field);
             }
 
             $csv->insertOne($csvRow);
-        }
+        });
     }
 }
