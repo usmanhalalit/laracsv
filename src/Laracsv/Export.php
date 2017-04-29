@@ -2,22 +2,42 @@
 
 namespace Laracsv;
 
-use League\Csv\Writer as LeagueWriter;
+use League\Csv\Writer;
 use SplTempFileObject;
 
 class Export
 {
-    protected $beforeEachCallback;
     /**
-     * @var LeagueWriter
+     * The applied callback.
+     *
+     * @var callable|null
+     */
+    protected $beforeEachCallback;
+
+    /**
+     * The CSV writer.
+     *
+     * @var \League\Csv\Writer
      */
     protected $csv;
 
+    /**
+     * Export constructor.
+     *
+     * @return void
+     */
     public function __construct()
     {
-        $this->csv = LeagueWriter::createFromFileObject(new SplTempFileObject());
+        $this->csv = Writer::createFromFileObject(new SplTempFileObject);
     }
 
+    /**
+     * Build the writer.
+     *
+     * @param \Illuminate\Database\Eloquent\Collection $collection
+     * @param array $fields
+     * @return $this
+     */
     public function build($collection, array $fields)
     {
         $csv = $this->csv;
@@ -39,12 +59,24 @@ class Export
         return $this;
     }
 
+    /**
+     * Download the CSV file.
+     *
+     * @param string|null $filename
+     * @return void
+     */
     public function download($filename = null)
     {
         $filename = $filename ?: date('Y-m-d_His') . '.csv';
         $this->csv->output($filename);
     }
 
+    /**
+     * Set the callback.
+     *
+     * @param callable $callback
+     * @return $this
+     */
     public function beforeEach(callable $callback)
     {
         $this->beforeEachCallback = $callback;
@@ -52,13 +84,22 @@ class Export
     }
 
     /**
-     * @return LeagueWriter
+     * Get the CSV writer.
+     *
+     * @return \League\Csv\Writer
      */
     public function getCsv()
     {
         return $this->csv;
     }
 
+    /**
+     * Ensure all fields of the model are visible.
+     *
+     * @param array $fields
+     * @param \Illuminate\Database\Eloquent\Model $row
+     * @return \Illuminate\Database\Eloquent\Model
+     */
     private function makeAllFieldsVisible(array $fields, $row)
     {
         $row = $row->makeVisible($fields);
@@ -66,9 +107,12 @@ class Export
     }
 
     /**
-     * @param $collection
+     * Add rows to the CSV.
+     *
+     * @param \Illuminate\Database\Eloquent\Collection $collection
      * @param array $fields
-     * @param $csv
+     * @param \League\Csv\Writer $csv
+     * @return void
      */
     private function addCsvRows($collection, array $fields, $csv)
     {
