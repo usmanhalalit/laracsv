@@ -112,12 +112,7 @@ class Export
         }
 
         $collection->makeVisible($fields)->each(function (Model $model) use ($fields, $csv) {
-            $csvRow = [];
-            foreach ($fields as $field) {
-                $csvRow[] = Arr::get($model->toArray(), $field);
-            }
-
-            $csv->insertOne($csvRow);
+            $csv->insertOne(Arr::only($model->toArray(), $fields));
         });
     }
 }
