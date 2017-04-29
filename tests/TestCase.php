@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase as PhpunitTestCase;
 
 class TestCase extends PhpunitTestCase
 {
-
     public function setUp()
     {
         $capsule = new Capsule;
@@ -26,7 +25,6 @@ class TestCase extends PhpunitTestCase
 
     public function tearDown()
     {
-
     }
 
     private function createTables($schema)
@@ -70,6 +68,5 @@ class TestCase extends PhpunitTestCase
 
             $product->categories()->attach(Category::find(collect(range(1, 10))->random()));
         }
-
     }
 }
