@@ -108,7 +108,7 @@ class Export
     private function addCsvRows(Collection $collection, array $fields, Writer $csv)
     {
         if ($beforeEachCallback = $this->beforeEachCallback) {
-            $collection->each($beforeEachCallback);
+            $collection->each($beforeEachCallback)->filter();
         }
 
         $collection->makeVisible($fields)->each(function (Model $model) use ($fields, $csv) {
