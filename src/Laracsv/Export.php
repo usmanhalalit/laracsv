@@ -113,7 +113,11 @@ class Export
         }
 
         $collection->makeVisible($fields)->each(function (Model $model) use ($fields, $csv) {
-            $csv->insertOne(Arr::only($model->toArray(), $fields));
+            $csv->insertOne(
+                collect($fields)->map(function($field) use ($model) {
+                    return Arr::get($model, $field);
+                })->toArray()
+            );
         });
     }
 }
