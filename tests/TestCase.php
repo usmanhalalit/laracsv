@@ -39,6 +39,7 @@ class TestCase extends PhpunitTestCase
 
         $schema->create('categories', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedInteger('parent_id');
             $table->string('title', 40);
             $table->timestamps();
         });
@@ -53,9 +54,11 @@ class TestCase extends PhpunitTestCase
     private function seedData()
     {
         $faker = \Faker\Factory::create();
-        foreach (range(1, 10) as $item) {
+        foreach (range(1, 10) as $id => $item) {
             Category::create([
-                'title' => $faker->name,
+                'id'        => $id,
+                'parent_id' => 1,
+                'title'     => $faker->name,
             ]);
         }
 

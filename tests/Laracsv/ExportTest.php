@@ -103,4 +103,25 @@ class ExportTest extends TestCase
         $this->assertCount(count($fields), explode(',', $lines[2]));
         unlink('test.csv');
     }
+
+    public function testCaseSensitiveRelationNames()
+    {
+        $cntCategories = 5;
+        $categories = Category::limit($cntCategories)->with('mainCategory')->get();
+
+        $csvExporter = new Export();
+
+        $csvExporter->build($categories, [
+            'id',
+            'title',
+            'mainCategory.id' => 'Parent Category ID',
+        ]);
+
+        $csv = $csvExporter->getCsv();
+
+        $secondLine = explode(',', explode(PHP_EOL, trim($csv))[1]);
+
+        $this->assertCount(3, $secondLine); // There should be a parent id for each category
+        $this->assertEquals(1, $secondLine[2]); // Parent ID is always seeded to #1
+    }
 }
