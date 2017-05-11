@@ -44,6 +44,9 @@ class ExportTest extends TestCase
 
         $csvExporter = new Export();
         $csvExporter->beforeEach(function ($model) {
+            if ($model->id == 2) {
+                return false;
+            }
             $model->custom_field = 'Test Value';
             $model->price = 30;
         });
@@ -57,6 +60,7 @@ class ExportTest extends TestCase
         $this->assertSame('id,Name,price,"Retail Price","Custom Field"', $firstLine);
         $this->assertEquals(30, $thirdRow[2]);
         $this->assertSame('"Test Value"', $thirdRow[4]);
+        $this->assertCount(5, $lines);
     }
 
     public function testUtf8()

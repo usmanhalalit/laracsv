@@ -5,7 +5,6 @@ namespace Laracsv;
 use League\Csv\Writer;
 use SplTempFileObject;
 use Illuminate\Support\Arr;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use League\Csv\AbstractCsv as LeagueCsvWriter;
 
@@ -108,16 +107,26 @@ class Export
      */
     private function addCsvRows(Collection $collection, array $fields, Writer $csv)
     {
-        if ($beforeEachCallback = $this->beforeEachCallback) {
-            $collection->each($beforeEachCallback)->filter();
-        }
+        $collection->makeVisible($fields);
 
-        $collection->makeVisible($fields)->each(function (Model $model) use ($fields, $csv) {
-            $csv->insertOne(
-                collect($fields)->map(function($field) use ($model) {
-                    return Arr::get($model, $field);
-                })->toArray()
-            );
-        });
+        foreach ($collection as $model) {
+            $beforeEachCallback = $this->beforeEachCallback;
+
+            // Call hook
+            if ($beforeEachCallback) {
+                $return = $beforeEachCallback($model);
+                if ($return === false) {
+                    continue;
+                }
+            }
+
+            $model->toArray();
+            $csvRow = [];
+            foreach ($fields as $field) {
+                $csvRow[] = Arr::get($model, $field);
+            }
+
+            $csv->insertOne($csvRow);
+        }
     }
 }
