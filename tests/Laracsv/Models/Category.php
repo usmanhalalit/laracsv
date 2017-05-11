@@ -6,10 +6,15 @@ class Category extends Model
 {
     protected $guarded = ['id'];
 
-    protected $hidden = ['id', 'parent_id', 'image_path', 'order_index', 'status', 'created_at', 'updated_at'];
+    protected $hidden = ['id', 'image_path', 'order_index', 'status', 'created_at', 'updated_at'];
 
     public function products()
     {
         return $this->belongsToMany(Product::class);
+    }
+
+    public function mainCategory()
+    {
+        return $this->belongsTo(Category::class, 'parent_id');
     }
 }
