@@ -107,7 +107,7 @@ $csvExporter->beforeEach(function ($user) {
 $csvExporter->build($users, ['email', 'name' => 'Full Name', 'created_at' => 'Joined']);
 ```
 
-**Note:** If a `beforeEach` callback returns `false` then the entire will be 
+**Note:** If a `beforeEach` callback returns `false` then the entire row will be 
 excluded from the CSV. It can come handy to filter some rows.
 
 #### Add fields and values
@@ -137,7 +137,7 @@ $csvExporter->build($products, ['title', 'category.title']);
 You may also tinker relation things as you wish with hooks:
 
 ```php
-$products = Product::where('order_count', '>', 10)->orderBy('order_count', 'desc')->get();
+$products = Product::with('categories')->where('order_count', '>', 10)->orderBy('order_count', 'desc')->get();
 $fields = ['id', 'title','original_price' => 'Market Price', 'category_ids',];
 $csvExporter = new \Laracsv\Export();
 $csvExporter->beforeEach(function ($product) {
