@@ -42,7 +42,7 @@ class Export
      * @param array $fields
      * @return $this
      */
-    public function build($collection, array $fields)
+    public function build($collection, array $fields, $outputHeaders = true)
     {
         $csv = $this->csv;
         $headers = [];
@@ -56,7 +56,8 @@ class Export
         }
 
         // Add first line, the header
-        $csv->insertOne($headers);
+        if ($outputHeaders == true)
+          $csv->insertOne($headers);
 
         $this->addCsvRows($collection, $fields, $csv);
 
