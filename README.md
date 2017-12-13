@@ -57,6 +57,10 @@ You can provide a filename if you wish:
 $csvExporter->download('active_users.csv');
 ```
 
+You can also suppress the first line(heading):
+```php
+$csvExporter->build(User::get(), ['email', 'name', 'created_at'], false);
+```
 If no filename is given a filename with date-time will be generated.
 
 #### Advanced Outputs
