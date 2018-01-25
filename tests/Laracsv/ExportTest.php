@@ -128,4 +128,34 @@ class ExportTest extends TestCase
         $this->assertCount(3, $secondLine); // There should be a parent id for each category
         $this->assertEquals(1, $secondLine[2]); // Parent ID is always seeded to #1
     }
+
+    public function testIlluminateSupportCollection()
+    {
+        $faker = \Faker\Factory::create();
+
+        $csvExporter = new Export();
+
+        $data = [];
+        for($i = 1; $i < 5; $i++) {
+            $data[] = [
+                'id' => $i,
+                'address' => $faker->streetAddress,
+                'firstName' => $faker->firstName
+            ];
+        }
+        $data = collect($data);
+        $csvExporter->build($data, [
+            'id',
+            'firstName',
+            'address'
+        ]);
+
+        $csv = $csvExporter->getCsv();
+        $lines = explode(PHP_EOL, trim($csv));
+        $this->assertCount(5, $lines);
+
+        $fourthLine = explode(',', explode(PHP_EOL, trim($csv))[4]);
+
+        $this->assertSame('4',$fourthLine[0]);
+    }
 }
