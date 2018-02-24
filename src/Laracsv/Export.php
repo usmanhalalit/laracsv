@@ -40,6 +40,8 @@ class Export
      *
      * @param \Illuminate\Database\Eloquent\Collection $collection
      * @param array $fields
+     * @param bool $outputHeaders
+     *
      * @return $this
      */
     public function build($collection, array $fields, $outputHeaders = true)
@@ -50,13 +52,13 @@ class Export
         foreach ($fields as $key => $field) {
             $headers[] = $field;
 
-            if (! is_numeric($key)) {
+            if (!is_numeric($key)) {
                 $fields[$key] = $key;
             }
         }
 
         // Add first line, the header
-        if ($outputHeaders == true)
+        if ($outputHeaders)
           $csv->insertOne($headers);
 
         $this->addCsvRows($collection, $fields, $csv);
@@ -109,22 +111,25 @@ class Export
     private function addCsvRows(Collection $collection, array $fields, Writer $csv)
     {
         $collection->makeVisible($fields);
-
+        $beforeEachCallback = $this->beforeEachCallback;
+        
         foreach ($collection as $model) {
-            $beforeEachCallback = $this->beforeEachCallback;
-
             // Call hook
-            if ($beforeEachCallback) {
+            if ($beforeEachCallback && is_callable($beforeEachCallback)) {
                 $return = $beforeEachCallback($model);
-                if ($return === false) {
+                if (false === $return) {
                     continue;
                 }
             }
 
-            $model->toArray();
             $csvRow = [];
+            $modelData = $model->toArray();
             foreach ($fields as $field) {
-                $csvRow[] = Arr::get($model, $field);
+                if ($model->hasGetMutator($field)) {
+                    $csvRow[] = $model->getAttribute($field);
+                } else {
+                    $csvRow[] = Arr::get($field, $modelData);
+                }
             }
 
             $csv->insertOne($csvRow);
