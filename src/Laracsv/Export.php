@@ -123,8 +123,13 @@ class Export
             }
 
             $csvRow = [];
+            $modelData = $model->toArray();
             foreach ($fields as $field) {
-                $csvRow[] = $model->{$field};
+                if ($model->hasGetMutator($field)) {
+                    $csvRow[] = $model->getAttribute($field);
+                } else {
+                    $csvRow[] = Arr::get($field, $modelData);
+                }
             }
 
             $csv->insertOne($csvRow);
