@@ -5,7 +5,7 @@ namespace Laracsv;
 use League\Csv\Writer;
 use SplTempFileObject;
 use Illuminate\Support\Arr;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use League\Csv\AbstractCsv as LeagueCsvWriter;
 
 class Export
@@ -38,11 +38,11 @@ class Export
     /**
      * Build the writer.
      *
-     * @param \Illuminate\Database\Eloquent\Collection $collection
+     * @param \Illuminate\Support\Collection $collection
      * @param array $fields
      * @return $this
      */
-    public function build($collection, array $fields, $outputHeaders = true)
+    public function build(Collection $collection, array $fields, $outputHeaders = true)
     {
         $csv = $this->csv;
         $headers = [];
@@ -57,7 +57,7 @@ class Export
 
         // Add first line, the header
         if ($outputHeaders == true)
-          $csv->insertOne($headers);
+            $csv->insertOne($headers);
 
         $this->addCsvRows($collection, $fields, $csv);
 
@@ -101,14 +101,18 @@ class Export
     /**
      * Add rows to the CSV.
      *
-     * @param \Illuminate\Database\Eloquent\Collection $collection
+     * @param \Illuminate\Support\Collection $collection
      * @param array $fields
      * @param \League\Csv\Writer $csv
      * @return void
      */
     private function addCsvRows(Collection $collection, array $fields, Writer $csv)
     {
-        $collection->makeVisible($fields);
+        $isEloquentCollection = false;
+        if(is_a($collection,\Illuminate\Database\Eloquent\Collection::class)) {
+            $collection->makeVisible($fields);
+            $isEloquentCollection = true;
+        }
 
         foreach ($collection as $model) {
             $beforeEachCallback = $this->beforeEachCallback;
@@ -121,7 +125,12 @@ class Export
                 }
             }
 
-            $model->toArray();
+            if($isEloquentCollection) {
+                $model->toArray();
+            } else {
+                $model = collect($model);
+            }
+            
             $csvRow = [];
             foreach ($fields as $field) {
                 $csvRow[] = Arr::get($model, $field);
