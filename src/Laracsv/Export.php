@@ -2,6 +2,7 @@
 
 namespace Laracsv;
 
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use League\Csv\Reader;
 use League\Csv\Writer;
 use SplTempFileObject;
@@ -31,6 +32,11 @@ class Export
      * @var array
      */
     protected $config = [];
+
+    /**
+     * @var bool
+     */
+    protected $isEloquentCollection = false;
 
     /**
      * Export constructor.
@@ -64,6 +70,10 @@ class Export
             if (!is_numeric($key)) {
                 $fields[$key] = $key;
             }
+        }
+
+        if (is_a($collection, EloquentCollection::class)) {
+            $this->isEloquentCollection = true;
         }
 
         $this->addHeader($csv, $headers);
@@ -127,15 +137,12 @@ class Export
      */
     private function addCsvRows(Collection $collection, array $fields, Writer $csv)
     {
-        $isEloquentCollection = false;
-        if (is_a($collection, \Illuminate\Database\Eloquent\Collection::class)) {
+        if ($this->isEloquentCollection) {
             $collection->makeVisible($fields);
-            $isEloquentCollection = true;
         }
 
         foreach ($collection as $model) {
             $beforeEachCallback = $this->beforeEachCallback;
-
             // Call hook
             if ($beforeEachCallback) {
                 $return = $beforeEachCallback($model);
@@ -144,11 +151,10 @@ class Export
                 }
             }
 
-            if ($isEloquentCollection) {
-                $model->toArray();
-            } else {
+            if (! $this->isEloquentCollection) {
                 $model = collect($model);
             }
+            $model->toArray();
 
             $csvRow = [];
             foreach ($fields as $field) {
