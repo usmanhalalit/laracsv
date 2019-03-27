@@ -2,6 +2,7 @@
 
 namespace Laracsv;
 
+use League\Csv\Reader;
 use League\Csv\Writer;
 use SplTempFileObject;
 use Illuminate\Support\Arr;
@@ -22,7 +23,14 @@ class Export
      *
      * @var \League\Csv\Writer
      */
-    protected $csv;
+    protected $writer;
+
+    /**
+     * Configuration
+     *
+     * @var array
+     */
+    protected $config = [];
 
     /**
      * Export constructor.
@@ -32,7 +40,7 @@ class Export
      */
     public function __construct(LeagueCsvWriter $writer = null)
     {
-        $this->csv = $writer ?: Writer::createFromFileObject(new SplTempFileObject);
+        $this->writer = $writer ?: Writer::createFromFileObject(new SplTempFileObject);
     }
 
     /**
@@ -40,11 +48,14 @@ class Export
      *
      * @param \Illuminate\Support\Collection $collection
      * @param array $fields
+     * @param array $config
      * @return $this
+     * @throws \League\Csv\CannotInsertRecord
      */
-    public function build(Collection $collection, array $fields, $outputHeaders = true)
+    public function build($collection, array $fields, $config = [])
     {
-        $csv = $this->csv;
+        $this->config = $config;
+        $csv = $this->writer;
         $headers = [];
 
         foreach ($fields as $key => $field) {
@@ -55,9 +66,9 @@ class Export
             }
         }
 
-        // Add first line, the header
-        if ($outputHeaders == true)
+        if (! isset($this->config['header']) || $this->config['header'] !== false) {
             $csv->insertOne($headers);
+        }
 
         $this->addCsvRows($collection, $fields, $csv);
 
@@ -73,7 +84,7 @@ class Export
     public function download($filename = null)
     {
         $filename = $filename ?: date('Y-m-d_His') . '.csv';
-        $this->csv->output($filename);
+        $this->writer->output($filename);
     }
 
     /**
@@ -89,13 +100,23 @@ class Export
     }
 
     /**
+     * Get a CSV reader.
+     *
+     * @return Reader
+     */
+    public function getReader()
+    {
+        return Reader::createFromString($this->writer->getContent());
+    }
+
+    /**
      * Get the CSV writer.
      *
-     * @return \League\Csv\Writer
+     * @return Writer
      */
-    public function getCsv()
+    public function getWriter()
     {
-        return $this->csv;
+        return $this->writer;
     }
 
     /**
@@ -105,6 +126,7 @@ class Export
      * @param array $fields
      * @param \League\Csv\Writer $csv
      * @return void
+     * @throws \League\Csv\CannotInsertRecord
      */
     private function addCsvRows(Collection $collection, array $fields, Writer $csv)
     {

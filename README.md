@@ -12,14 +12,14 @@ $csvExporter = new \Laracsv\Export();
 $csvExporter->build($users, ['email', 'name'])->download();
 ```
 
-And a proper CSV file will be downloaded with `email` and `name` fields.
+And a proper CSV file will be downloaded with `email` and `name` fields. As simple as it sounds!
 
 ## Installation
 
 Just run this on your terminal:
 
 ```
-composer require "usmanhalalit/laracsv:1.*@dev"
+composer require "usmanhalalit/laracsv:^2.0"
 ```
 and you should be good to go.
 
@@ -29,6 +29,7 @@ and you should be good to go.
  - [Output Options](#output-options)
     - [Download](#download) 
  - [Custom Headers](#custom-headers)
+    - [No Header](#no-header)
  - [Modify or Add Values](#modify-or-add-values)
     - [Add fields and values](#add-fields-and-values)
  - [Model Relationships](#model-relationships)
@@ -36,9 +37,9 @@ and you should be good to go.
 
 ### Build CSV
 
-`$exporter->build($modelCollection, $fields)` takes two parameters. 
-First one is the model (collection of models), and seconds one takes the field names
- you want to export.
+`$exporter->build($modelCollection, $fields)` takes three parameters. 
+First one is the model (collection of models), seconds one takes the field names
+ you want to export, third one is config, which is optional.
 
 ```php
 $csvExporter->build(User::get(), ['email', 'name', 'created_at']);
@@ -56,28 +57,27 @@ You can provide a filename if you wish:
 ```php
 $csvExporter->download('active_users.csv');
 ```
-
-You can also suppress the first line(heading):
-```php
-$csvExporter->build(User::get(), ['email', 'name', 'created_at'], false);
-```
 If no filename is given a filename with date-time will be generated.
 
 #### Advanced Outputs
 
 LaraCSV uses [League CSV](http://csv.thephpleague.com/). You can do what League CSV 
-is able to do. You can get the underlying League CSV instance by calling:
+is able to do. You can get the underlying League CSV writer instance by calling:
 
 ```php
-$csv = $csvExporter->getCsv();
+$csv = $csvExporter->getWriter();
 ```
 
 And then you can do several things like:
-```php
-$csv->toHTML(); // To output the CSV as an HTML table 
+```php 
 $csv->jsonSerialize()(); // To turn the CSV in to an array 
-$csv = (string) $csv; // To get the CSV as string
+$csv = $csv->getContent(); // To get the CSV as string
 echo $csv; // To print the CSV
+```
+
+You can also get a Reader instance by calling: 
+```php
+$reader = $csvExporter->getReader();
 ```
 
 For more information please check [League CSV documentation](http://csv.thephpleague.com/).
@@ -94,6 +94,15 @@ $csvExporter->build(User::get(), ['email', 'name' => 'Full Name', 'created_at' =
 
 Now `name` column will show the header `Full Name` but it will still take 
 values from `name` field of the model. 
+
+#### No Header
+
+You can also suppress the CSV header:
+```php
+$csvExporter->build(User::get(), ['email', 'name', 'created_at'], [
+    'header' => false,
+]);
+```
 
 ### Modify or Add Values
 
@@ -148,8 +157,5 @@ $csvExporter->beforeEach(function ($product) {
     $product->category_ids = implode(', ', $product->categories->pluck('id')->toArray());
 });
 ```
-
-## Road Map
-
- - Import CSV
  
+&copy; [Muhammad Usman](http://usman.it/). Licensed under MIT license.

@@ -14,8 +14,8 @@ class ExportTest extends TestCase
 
         $csvExporter = new Export();
         $csvExporter->build($products, $fields);
-        $csv = $csvExporter->getCsv();
-        $lines = explode(PHP_EOL, trim($csv));
+        $csv = $csvExporter->getReader();
+        $lines = explode(PHP_EOL, trim($csv->getContent()));
         $firstLine = $lines[0];
         $this->assertEquals("id,title,price,original_price", $firstLine);
         $this->assertCount(11, $lines);
@@ -30,8 +30,8 @@ class ExportTest extends TestCase
 
         $csvExporter = new Export();
         $csvExporter->build($products, $fields);
-        $csv = $csvExporter->getCsv();
-        $lines = explode(PHP_EOL, trim($csv));
+        $csv = $csvExporter->getReader();
+        $lines = explode(PHP_EOL, trim($csv->getContent()));
         $firstLine = $lines[0];
         $this->assertSame('id,Name,price,"Retail Price","Custom Field"', $firstLine);
     }
@@ -53,8 +53,8 @@ class ExportTest extends TestCase
 
         $csvExporter->build($products, $fields);
 
-        $csv = $csvExporter->getCsv();
-        $lines = explode(PHP_EOL, trim($csv));
+        $csv = $csvExporter->getReader();
+        $lines = explode(PHP_EOL, trim($csv->getContent()));
         $firstLine = $lines[0];
         $thirdRow = explode(',', $lines[2]);
         $this->assertSame('id,Name,price,"Retail Price","Custom Field"', $firstLine);
@@ -65,8 +65,6 @@ class ExportTest extends TestCase
 
     public function testUtf8()
     {
-        $faker = \Faker\Factory::create();
-
         foreach (range(11, 15) as $item) {
             $product = Product::create([
                 'title' =>  'رجا ابو سلامة',
@@ -84,8 +82,8 @@ class ExportTest extends TestCase
 
         $csvExporter->build($products, ['title', 'price']);
 
-        $csv = $csvExporter->getCsv();
-        $lines = explode(PHP_EOL, trim($csv));
+        $csv = $csvExporter->getReader();
+        $lines = explode(PHP_EOL, trim($csv->getContent()));
 
         $this->assertSame('"رجا ابو سلامة",70', $lines[2]);
     }
@@ -98,9 +96,9 @@ class ExportTest extends TestCase
         file_put_contents('test.csv', '');
         $csvExporter = new Export(Writer::createFromPath('test.csv', 'r+'));
         $csvExporter->build($products, $fields);
-        $csv = $csvExporter->getCsv();
+        $csv = $csvExporter->getReader();
 
-        $lines = explode(PHP_EOL, trim($csv));
+        $lines = explode(PHP_EOL, trim($csv->getContent()));
         $firstLine = $lines[0];
         $this->assertEquals("id,title,price,original_price", $firstLine);
         $this->assertCount(11, $lines);
@@ -121,9 +119,9 @@ class ExportTest extends TestCase
             'mainCategory.id' => 'Parent Category ID',
         ]);
 
-        $csv = $csvExporter->getCsv();
+        $csv = $csvExporter->getReader();
 
-        $secondLine = explode(',', explode(PHP_EOL, trim($csv))[1]);
+        $secondLine = explode(',', explode(PHP_EOL, trim($csv->getContent()))[1]);
 
         $this->assertCount(3, $secondLine); // There should be a parent id for each category
         $this->assertEquals(1, $secondLine[2]); // Parent ID is always seeded to #1
@@ -150,12 +148,66 @@ class ExportTest extends TestCase
             'address'
         ]);
 
-        $csv = $csvExporter->getCsv();
+        $csv = $csvExporter->getWriter();
         $lines = explode(PHP_EOL, trim($csv));
         $this->assertCount(5, $lines);
 
         $fourthLine = explode(',', explode(PHP_EOL, trim($csv))[4]);
 
         $this->assertSame('4',$fourthLine[0]);
+    }
+
+    public function testRead()
+    {
+        $products = Product::limit(10)->get();
+
+        $fields = ['id', 'title', 'price', 'original_price',];
+
+        $csvExporter = new Export();
+        $csvExporter->build($products, $fields);
+        $reader = $csvExporter->getReader();
+        $this->assertCount(11, $reader);
+        $this->assertEquals('title', $reader->fetchOne()[1]);
+        $this->assertEquals(Product::first()->title, $reader->fetchOne(1)[1]);
+    }
+
+    public function testJson()
+    {
+        $products = Product::limit(10)->get();
+
+        $fields = ['id', 'title', 'price', 'original_price',];
+
+        $csvExporter = new Export();
+        $csvExporter->build($products, $fields);
+        $reader = $csvExporter->getReader();
+        $this->assertEquals(Product::first()->title, $reader->jsonSerialize()[1][1]);
+    }
+
+    public function testWriter()
+    {
+        $products = Product::limit(10)->get();
+
+        $fields = ['id', 'title', 'price', 'original_price',];
+
+        $csvExporter = new Export();
+        $csvExporter->build($products, $fields);
+        $writer = $csvExporter->getWriter();
+        $this->assertNotFalse(strstr($writer->getContent(), Product::first()->title));
+    }
+
+    public function testWithNoHeader()
+    {
+        $products = Product::limit(10)->get();
+
+        $fields = ['id', 'title', 'price', 'original_price',];
+
+        $csvExporter = new Export();
+        $csvExporter->build($products, $fields, ['header' => false]);
+        $csv = $csvExporter->getReader();
+        $lines = explode(PHP_EOL, trim($csv->getContent()));
+        $firstLine = $lines[0];
+        $this->assertNotEquals("id,title,price,original_price", $firstLine);
+        $this->assertCount(10, $lines);
+        $this->assertCount(count($fields), explode(',', $lines[2]));
     }
 }
