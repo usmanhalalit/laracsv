@@ -1,4 +1,6 @@
-<?php namespace Laracsv;
+<?php
+
+namespace Laracsv;
 
 use Laracsv\Models\Category;
 use Laracsv\Models\Product;
@@ -67,7 +69,7 @@ class ExportTest extends TestCase
     {
         foreach (range(11, 15) as $item) {
             $product = Product::create([
-                'title' =>  'رجا ابو سلامة',
+                'title' => 'رجا ابو سلامة',
                 'price' => 70,
                 'original_price' => 80,
             ]);
@@ -75,7 +77,7 @@ class ExportTest extends TestCase
             $product->categories()->attach(Category::find(collect(range(1, 10))->random()));
         }
 
-        $products = Product::where('title',  'رجا ابو سلامة')->get();
+        $products = Product::where('title', 'رجا ابو سلامة')->get();
         $this->assertEquals('رجا ابو سلامة', $products->first()->title);
 
         $csvExporter = new Export();
@@ -134,7 +136,7 @@ class ExportTest extends TestCase
         $csvExporter = new Export();
 
         $data = [];
-        for($i = 1; $i < 5; $i++) {
+        for ($i = 1; $i < 5; $i++) {
             $data[] = [
                 'id' => $i,
                 'address' => $faker->streetAddress,
@@ -154,7 +156,7 @@ class ExportTest extends TestCase
 
         $fourthLine = explode(',', explode(PHP_EOL, trim($csv))[4]);
 
-        $this->assertSame('4',$fourthLine[0]);
+        $this->assertSame('4', $fourthLine[0]);
     }
 
     public function testRead()

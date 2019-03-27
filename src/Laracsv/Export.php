@@ -61,15 +61,12 @@ class Export
         foreach ($fields as $key => $field) {
             $headers[] = $field;
 
-            if (! is_numeric($key)) {
+            if (!is_numeric($key)) {
                 $fields[$key] = $key;
             }
         }
 
-        if (! isset($this->config['header']) || $this->config['header'] !== false) {
-            $csv->insertOne($headers);
-        }
-
+        $this->addHeader($csv, $headers);
         $this->addCsvRows($collection, $fields, $csv);
 
         return $this;
@@ -131,7 +128,7 @@ class Export
     private function addCsvRows(Collection $collection, array $fields, Writer $csv)
     {
         $isEloquentCollection = false;
-        if(is_a($collection,\Illuminate\Database\Eloquent\Collection::class)) {
+        if (is_a($collection, \Illuminate\Database\Eloquent\Collection::class)) {
             $collection->makeVisible($fields);
             $isEloquentCollection = true;
         }
@@ -147,18 +144,29 @@ class Export
                 }
             }
 
-            if($isEloquentCollection) {
+            if ($isEloquentCollection) {
                 $model->toArray();
             } else {
                 $model = collect($model);
             }
-            
+
             $csvRow = [];
             foreach ($fields as $field) {
                 $csvRow[] = Arr::get($model, $field);
             }
 
             $csv->insertOne($csvRow);
+        }
+    }
+
+    /**
+     * @param $csv
+     * @param array $headers
+     */
+    private function addHeader($csv, array $headers): void
+    {
+        if (!isset($this->config['header']) || $this->config['header'] !== false) {
+            $csv->insertOne($headers);
         }
     }
 }

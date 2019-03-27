@@ -1,4 +1,6 @@
-<?php namespace Laracsv\Models;
+<?php
+
+namespace Laracsv\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

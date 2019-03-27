@@ -1,4 +1,6 @@
-<?php namespace Laracsv;
+<?php
+
+namespace Laracsv;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\Blueprint;
@@ -13,8 +15,8 @@ class TestCase extends PhpunitTestCase
         $capsule = new Capsule;
 
         $capsule->addConnection(array(
-            'driver'  => 'sqlite',
-            'database'  => ':memory:',
+            'driver' => 'sqlite',
+            'database' => ':memory:',
         ));
         $capsule->setAsGlobal();
         $capsule->bootEloquent();
@@ -56,9 +58,9 @@ class TestCase extends PhpunitTestCase
         $faker = \Faker\Factory::create();
         foreach (range(1, 10) as $id => $item) {
             Category::create([
-                'id'        => $id,
+                'id' => $id,
                 'parent_id' => 1,
-                'title'     => $faker->name,
+                'title' => $faker->name,
             ]);
         }
 
