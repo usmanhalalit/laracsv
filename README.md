@@ -19,7 +19,7 @@ And a proper CSV file will be downloaded with `email` and `name` fields. As simp
 Just run this on your terminal:
 
 ```
-composer require "usmanhalalit/laracsv:^2.0"
+composer require usmanhalalit/laracsv:^2.0
 ```
 and you should be good to go.
 
@@ -62,22 +62,17 @@ If no filename is given a filename with date-time will be generated.
 #### Advanced Outputs
 
 LaraCSV uses [League CSV](http://csv.thephpleague.com/). You can do what League CSV 
-is able to do. You can get the underlying League CSV writer instance by calling:
+is able to do. You can get the underlying League CSV writer and reader instance by calling:
 
 ```php
-$csv = $csvExporter->getWriter();
+$csvWriter = $csvExporter->getWriter();
+$csvReader = $csvExporter->getReader();
 ```
 
 And then you can do several things like:
 ```php 
-$csv->jsonSerialize()(); // To turn the CSV in to an array 
-$csv = $csv->getContent(); // To get the CSV as string
-echo $csv; // To print the CSV
-```
-
-You can also get a Reader instance by calling: 
-```php
-$reader = $csvExporter->getReader();
+$csvString = $csvWriter->getContent(); // To get the CSV as string
+$csvReader->jsonSerialize(); // To turn the CSV in to an array 
 ```
 
 For more information please check [League CSV documentation](http://csv.thephpleague.com/).
