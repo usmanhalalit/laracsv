@@ -3,6 +3,8 @@
 A Laravel package to easily generate CSV files from Eloquent model.
 
 [![Build Status](https://travis-ci.org/usmanhalalit/laracsv.svg?branch=master)](https://travis-ci.org/usmanhalalit/laracsv)
+[![Total Downloads](https://poser.pugx.org/usmanhalalit/laracsv/downloads)](https://packagist.org/packages/usmanhalalit/laracsv)
+[![Daily Downloads](https://poser.pugx.org/usmanhalalit/laracsv/d/daily)](https://packagist.org/packages/usmanhalalit/laracsv)
 
 ## Basic usage
 
