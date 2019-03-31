@@ -212,4 +212,21 @@ class ExportTest extends TestCase
         $this->assertCount(10, $lines);
         $this->assertCount(count($fields), explode(',', $lines[2]));
     }
+
+    public function testWithCustomDelimeter()
+    {
+        $products = Product::limit(10)->get();
+
+        $fields = ['id', 'title', 'price', 'original_price',];
+
+        $csvExporter = new Export();
+        $csvExporter->getWriter()->setDelimiter(';');
+        $csvExporter->build($products, $fields);
+        $csv = $csvExporter->getReader();
+        $lines = explode(PHP_EOL, trim($csv->getContent()));
+        $firstLine = $lines[0];
+        $this->assertEquals("id;title;price;original_price", $firstLine);
+        $this->assertCount(11, $lines);
+        $this->assertCount(count($fields), explode(';', $lines[2]));
+    }
 }
