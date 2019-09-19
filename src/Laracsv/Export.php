@@ -8,6 +8,7 @@ use League\Csv\Writer;
 use SplTempFileObject;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\LazyCollection;
 use League\Csv\AbstractCsv as LeagueCsvWriter;
 
 class Export
@@ -126,17 +127,20 @@ class Export
         return $this->writer;
     }
 
-    /**
-     * Add rows to the CSV.
-     *
-     * @param \Illuminate\Support\Collection $collection
-     * @param array $fields
-     * @param \League\Csv\Writer $csv
-     * @return void
-     * @throws \League\Csv\CannotInsertRecord
-     */
-    private function addCsvRows(Collection $collection, array $fields, Writer $csv)
+	/**
+	 * Add rows to the CSV.
+	 *
+	 * @param \Illuminate\Support\Collection|LazyCollection $collection
+	 * @param array $fields
+	 * @param \League\Csv\Writer $csv
+	 * @return void
+	 * @throws \League\Csv\CannotInsertRecord
+	 * @throws \Exception
+	 */
+    private function addCsvRows($collection, array $fields, Writer $csv)
     {
+    	$this->checkCollection($collection);
+
         if ($this->isEloquentCollection) {
             $collection->makeVisible($fields);
         }
@@ -175,4 +179,16 @@ class Export
             $csv->insertOne($headers);
         }
     }
+
+	/**
+	 * @param $collection
+	 * @throws \Exception
+	 */
+	private function checkCollection($collection)
+	{
+		if (!is_a($collection, LazyCollection::class) &&
+			!is_a($collection, Collection::class)) {
+			throw new \Exception("Argument 1 passed to build() must be an instance of Illuminate\Support\Collection or Illuminate\Support\LazyCollection.");
+		}
+	}
 }
