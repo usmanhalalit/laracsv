@@ -229,4 +229,20 @@ class ExportTest extends TestCase
         $this->assertCount(11, $lines);
         $this->assertCount(count($fields), explode(';', $lines[2]));
     }
+
+	public function testBasicCsvUsingLazyCollection()
+	{
+		$products = Product::limit(10)->cursor();
+
+		$fields = ['id', 'title', 'price', 'original_price',];
+
+		$csvExporter = new Export();
+		$csvExporter->build($products, $fields);
+		$csv = $csvExporter->getReader();
+		$lines = explode(PHP_EOL, trim($csv->getContent()));
+		$firstLine = $lines[0];
+		$this->assertEquals("id,title,price,original_price", $firstLine);
+		$this->assertCount(11, $lines);
+		$this->assertCount(count($fields), explode(',', $lines[2]));
+	}
 }
