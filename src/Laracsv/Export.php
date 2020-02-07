@@ -137,24 +137,17 @@ class Export
      */
     private function addCsvRows(Collection $collection, array $fields, Writer $csv)
     {
-        if ($this->isEloquentCollection) {
-            $collection->makeVisible($fields);
-        }
-
         foreach ($collection as $model) {
             $beforeEachCallback = $this->beforeEachCallback;
+
             // Call hook
             if ($beforeEachCallback) {
                 $return = $beforeEachCallback($model);
+
                 if ($return === false) {
                     continue;
                 }
             }
-
-            if (! $this->isEloquentCollection) {
-                $model = collect($model);
-            }
-            $model->toArray();
 
             $csvRow = [];
             foreach ($fields as $field) {
