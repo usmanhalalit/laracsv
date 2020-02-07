@@ -2,7 +2,6 @@
 
 namespace Laracsv;
 
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use League\Csv\Reader;
 use League\Csv\Writer;
 use SplTempFileObject;
@@ -32,11 +31,6 @@ class Export
      * @var array
      */
     protected $config = [];
-
-    /**
-     * @var bool
-     */
-    protected $isEloquentCollection = false;
 
     /**
      * Export constructor.
@@ -70,10 +64,6 @@ class Export
             if (!is_numeric($key)) {
                 $fields[$key] = $key;
             }
-        }
-
-        if (is_a($collection, EloquentCollection::class)) {
-            $this->isEloquentCollection = true;
         }
 
         $this->addHeader($csv, $headers);
