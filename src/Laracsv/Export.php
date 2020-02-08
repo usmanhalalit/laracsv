@@ -139,6 +139,10 @@ class Export
                 }
             }
 
+            if (!Arr::accessible($model)) {
+                $model = collect($model);
+            }
+
             $csvRow = [];
             foreach ($fields as $field) {
                 $csvRow[] = Arr::get($model, $field);

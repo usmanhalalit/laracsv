@@ -5,6 +5,7 @@ namespace Laracsv;
 use Laracsv\Models\Category;
 use Laracsv\Models\Product;
 use League\Csv\Writer;
+use stdClass;
 
 class ExportTest extends TestCase
 {
@@ -156,6 +157,39 @@ class ExportTest extends TestCase
 
         $fourthLine = explode(',', explode(PHP_EOL, trim($csv))[4]);
 
+        $this->assertSame('4', $fourthLine[0]);
+    }
+
+    public function testExportPlainObjects()
+    {
+        $faker = \Faker\Factory::create();
+
+        $csvExporter = new Export();
+
+        $data = [];
+        for ($i = 1; $i < 5; $i++) {
+            $object = new stdClass();
+            $object->id = $i;
+            $object->address = $faker->streetAddress;
+            $object->firstName = $faker->firstName;
+
+            $data[] = $object;
+        }
+
+        $data = collect($data);
+
+        $csvExporter->build($data, [
+            'id',
+            'firstName',
+            'address'
+        ]);
+
+        $csv = trim($csvExporter->getWriter()->getContent());
+
+        $lines = explode(PHP_EOL, $csv);
+        $fourthLine = explode(',', $lines[4]);
+
+        $this->assertCount(5, $lines);
         $this->assertSame('4', $fourthLine[0]);
     }
 
