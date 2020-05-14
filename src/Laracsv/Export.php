@@ -2,12 +2,11 @@
 
 namespace Laracsv;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use League\Csv\Reader;
 use League\Csv\Writer;
 use SplTempFileObject;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
-use League\Csv\AbstractCsv as LeagueCsvWriter;
 
 class Export
 {
@@ -26,7 +25,7 @@ class Export
     protected $writer;
 
     /**
-     * Configuration
+     * Export configuration.
      *
      * @var array
      */
@@ -35,10 +34,9 @@ class Export
     /**
      * Export constructor.
      *
-     * @param \League\Csv\AbstractCsv|null $writer
-     * @return void
+     * @param \League\Csv\Writer|null $writer
      */
-    public function __construct(LeagueCsvWriter $writer = null)
+    public function __construct(Writer $writer = null)
     {
         $this->writer = $writer ?: Writer::createFromFileObject(new SplTempFileObject);
     }
@@ -52,10 +50,10 @@ class Export
      * @return $this
      * @throws \League\Csv\CannotInsertRecord
      */
-    public function build($collection, array $fields, $config = [])
+    public function build($collection, array $fields, array $config = []): self
     {
         $this->config = $config;
-        $csv = $this->writer;
+        $writer = $this->writer;
         $headers = [];
 
         foreach ($fields as $key => $field) {
@@ -66,8 +64,8 @@ class Export
             }
         }
 
-        $this->addHeader($csv, $headers);
-        $this->addCsvRows($collection, $fields, $csv);
+        $this->addHeader($writer, $headers);
+        $this->addCsvRows($writer, $fields, $collection);
 
         return $this;
     }
@@ -76,11 +74,11 @@ class Export
      * Download the CSV file.
      *
      * @param string|null $filename
-     * @return void
      */
-    public function download($filename = null)
+    public function download($filename = null): void
     {
         $filename = $filename ?: date('Y-m-d_His') . '.csv';
+
         $this->writer->output($filename);
     }
 
@@ -90,9 +88,10 @@ class Export
      * @param callable $callback
      * @return $this
      */
-    public function beforeEach(callable $callback)
+    public function beforeEach(callable $callback): self
     {
         $this->beforeEachCallback = $callback;
+
         return $this;
     }
 
@@ -101,7 +100,7 @@ class Export
      *
      * @return Reader
      */
-    public function getReader()
+    public function getReader(): Reader
     {
         return Reader::createFromString($this->writer->getContent());
     }
@@ -111,7 +110,7 @@ class Export
      *
      * @return Writer
      */
-    public function getWriter()
+    public function getWriter(): Writer
     {
         return $this->writer;
     }
@@ -119,13 +118,12 @@ class Export
     /**
      * Add rows to the CSV.
      *
-     * @param \Illuminate\Support\Collection $collection
+     * @param Writer $writer
      * @param array $fields
-     * @param \League\Csv\Writer $csv
-     * @return void
+     * @param \Illuminate\Support\Collection $collection
      * @throws \League\Csv\CannotInsertRecord
      */
-    private function addCsvRows(Collection $collection, array $fields, Writer $csv)
+    private function addCsvRows(Writer $writer, array $fields, Collection $collection): void
     {
         foreach ($collection as $model) {
             $beforeEachCallback = $this->beforeEachCallback;
@@ -148,18 +146,20 @@ class Export
                 $csvRow[] = Arr::get($model, $field);
             }
 
-            $csv->insertOne($csvRow);
+            $writer->insertOne($csvRow);
         }
     }
 
     /**
-     * @param $csv
+     * Adds a header row to the CSV.
+     *
+     * @param Writer $writer
      * @param array $headers
      */
-    private function addHeader($csv, array $headers): void
+    private function addHeader(Writer $writer, array $headers): void
     {
-        if (!isset($this->config['header']) || $this->config['header'] !== false) {
-            $csv->insertOne($headers);
+        if (Arr::get($this->config, 'header', true) !== false) {
+            $writer->insertOne($headers);
         }
     }
 }
