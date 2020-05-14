@@ -74,6 +74,7 @@ class Export
      * Download the CSV file.
      *
      * @param string|null $filename
+     * @return void
      */
     public function download($filename = null): void
     {
@@ -121,6 +122,7 @@ class Export
      * @param Writer $writer
      * @param array $fields
      * @param \Illuminate\Support\Collection $collection
+     * @return void
      * @throws \League\Csv\CannotInsertRecord
      */
     private function addCsvRows(Writer $writer, array $fields, Collection $collection): void
@@ -155,6 +157,7 @@ class Export
      *
      * @param Writer $writer
      * @param array $headers
+     * @return void
      */
     private function addHeader(Writer $writer, array $headers): void
     {
