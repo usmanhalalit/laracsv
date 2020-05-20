@@ -12,6 +12,13 @@ use SplTempFileObject;
 class Export
 {
     /**
+     * The default chunk size when looping through the builder results.
+     *
+     * @var int
+     */
+    private const DEFAULT_CHUNK_SIZE = 1000;
+
+    /**
      * The applied callback.
      *
      * @var callable|null
@@ -81,7 +88,7 @@ class Export
     {
         $this->config = $config;
 
-        $chunkSize = Arr::get($config, 'chunk', 1000);
+        $chunkSize = Arr::get($config, 'chunk', self::DEFAULT_CHUNK_SIZE);
         $dataFields = $this->getDataFields($fields);
 
         $this->addHeader($this->writer, $this->getHeaderFields($fields));
