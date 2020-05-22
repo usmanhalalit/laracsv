@@ -78,7 +78,7 @@ class Export
     /**
      * Build the CSV from a builder instance.
      *
-     * @param Builder $builder
+     * @param \Illuminate\Database\Eloquent\Builder $builder
      * @param array $fields
      * @param array $config
      * @return $this
