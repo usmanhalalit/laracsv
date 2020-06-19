@@ -66,6 +66,83 @@ class ExportTest extends TestCase
         $this->assertCount(5, $lines);
     }
 
+    public function testBeforeEachChunkCallback()
+    {
+        $export = new Export();
+
+        // Verify that the categories are not loaded
+        $export->beforeEach(function ($record) {
+            $this->assertFalse($record->relationLoaded('categories'));
+        });
+
+        $export->buildFromBuilder(Product::select(), ['id']);
+
+        // Eager load the categories per chunk
+        $export->beforeEachChunk(function ($collection) {
+            $collection->load('categories');
+        });
+
+        // Verify that the categories are eagerly loaded per chunk
+        $export->beforeEach(function ($record) {
+            $this->assertTrue($record->relationLoaded('categories'));
+        });
+
+        $export->buildFromBuilder(Product::select(), ['id']);
+    }
+
+    public function testBuilderChunkSize()
+    {
+        $export = new Export();
+
+        $export->beforeEachChunk(function ($collection) {
+            $this->assertSame(10, $collection->count());
+        });
+
+        $export->buildFromBuilder(Product::select(), ['formatted_property' => 'Property']);
+
+        $export->beforeEachChunk(function ($collection) {
+            $this->assertSame(5, $collection->count());
+        });
+
+        $export->buildFromBuilder(Product::select(), ['formatted_property' => 'Property'], ['chunk' => 5]);
+    }
+
+    public function testBuilderHeader()
+    {
+        $export = new Export();
+
+        $export->buildFromBuilder(Product::select(), ['id' => 'ID Header', 'price']);
+
+        $lines = explode(PHP_EOL, trim($export->getReader()->getContent()));
+
+        $this->assertSame('"ID Header",price', $lines[0]);
+
+        $export = new Export();
+
+        $export->buildFromBuilder(Product::select(), ['id' => 'ID Header', 'price'], ['header' => false]);
+
+        $lines = explode(PHP_EOL, trim($export->getReader()->getContent()));
+
+        $this->assertNotSame('"ID Header",price', $lines[0]);
+    }
+
+    public function testBuilder()
+    {
+        $export = new Export();
+
+        $export->beforeEach(function ($record) {
+            $record->formatted_property = 'id_' . $record->id;
+        });
+
+        $export->buildFromBuilder(Product::select(), ['formatted_property'], ['header' => false]);
+
+        $lines = explode(PHP_EOL, trim($export->getReader()->getContent()));
+
+        foreach ($lines as $index => $line) {
+            $this->assertSame('id_' . ($index + 1), $line);
+        }
+    }
+
     public function testUtf8()
     {
         foreach (range(11, 15) as $item) {
